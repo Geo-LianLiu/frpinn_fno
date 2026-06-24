@@ -1,0 +1,88 @@
+z_min: 0.0
+z_max: 800000.0
+nz: 64
+source_pos: [0.0, 0.0, -10000.0]
+rho_range: [100.0, 800000.0]
+z_range: [0.0, 800000.0]
+frequencies: [0.0001, 0.1, 1.0, 10.0, 100.0]
+
+eps_r_range: [1.0, 10.0]
+mu_r_range: [1.0, 1.0]
+sigma_range: [1.0e-4, 1.0]
+
+model:
+  num_subnets: 10
+  input_dim: 8
+  fourier_dim: 64
+  hidden_dims: [128, 200, 200, 200, 200, 128]
+  output_dim: 14
+  scale_factors: [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0]
+  nz: 64
+  medium_channels: 4
+  fno_hidden_dim: 64
+  num_fno_layers: 4
+  num_modes: 12
+  film_dim: 128
+
+training:
+  phase1_epochs: 8000
+  phase2_epochs: 2000
+  lr: 0.001
+  weight_decay: 1.0e-4
+  warmup_epochs: 1000
+  resample_interval: 10
+  grad_clip: 1.0
+  n_medium_per_epoch_phase1: 5
+  n_medium_per_epoch_phase2: 3
+
+sampling:
+  n_interior: 3000
+  n_gauge: 1500
+  n_interface: 500
+  n_radiation: 300
+  n_data: 800
+  n_sym: 500
+  delta_z: 0.5
+  R_min: 0.1
+
+loss:
+  adaptive: true
+  init_weights: [1.0, 1.0, 1.0, 1.0, 1.0]
+  beta1: 1.0
+  beta2: 1.0
+  eps: 1.0e-8
+  use_complex_km: false
+
+medium_library:
+  n_perturbed_models: 30
+  seed: 42
+  base_models:
+    - type: uniform
+      sigma: 0.01
+    - type: uniform
+      sigma: 0.1
+    - type: h_type
+      layers:
+        - thickness: 200000.0
+          sigma: 0.01
+        - thickness: 100000.0
+          sigma: 0.1
+        - thickness: 500000.0
+          sigma: 0.001
+    - type: hk_type
+      layers:
+        - thickness: 100000.0
+          sigma: 0.01
+        - thickness: 150000.0
+          sigma: 0.1
+        - thickness: 100000.0
+          sigma: 0.001
+        - thickness: 450000.0
+          sigma: 0.05
+
+data:
+  csv_path: null
+
+output:
+  checkpoint_dir: checkpoints
+  loss_history_dir: checkpoints
